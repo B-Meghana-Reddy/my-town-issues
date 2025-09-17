@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Camera, MapPin, Upload, CheckCircle } from "lucide-react";
+import { ArrowLeft, Camera, MapPin, Upload, CheckCircle, Sparkles, Target, Clock, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface ReportIssueFormProps {
@@ -26,22 +26,33 @@ const ReportIssueForm = ({ onBack }: ReportIssueFormProps) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const categories = [
-    "Pothole",
-    "Streetlight",
-    "Traffic Signal",
-    "Graffiti",
-    "Trash/Litter",
-    "Water Issue",
-    "Sidewalk Damage",
-    "Tree/Vegetation",
-    "Noise Complaint",
-    "Other"
+    { value: "pothole", label: "Pothole", icon: "🕳️" },
+    { value: "streetlight", label: "Streetlight", icon: "💡" },
+    { value: "traffic", label: "Traffic Signal", icon: "🚦" },
+    { value: "graffiti", label: "Graffiti", icon: "🎨" },
+    { value: "trash", label: "Trash/Litter", icon: "🗑️" },
+    { value: "water", label: "Water Issue", icon: "💧" },
+    { value: "sidewalk", label: "Sidewalk Damage", icon: "🛤️" },
+    { value: "tree", label: "Tree/Vegetation", icon: "🌳" },
+    { value: "noise", label: "Noise Complaint", icon: "🔊" },
+    { value: "other", label: "Other", icon: "📝" }
+  ];
+
+  const priorities = [
+    { value: "low", label: "Low Priority", desc: "Minor inconvenience", color: "text-success" },
+    { value: "medium", label: "Medium Priority", desc: "Moderate issue", color: "text-warning" },
+    { value: "high", label: "High Priority", desc: "Safety concern", color: "text-error" },
+    { value: "urgent", label: "Urgent", desc: "Immediate attention needed", color: "text-error" },
   ];
 
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setFormData({ ...formData, photo: file });
+      toast({
+        title: "Photo Added",
+        description: "Your photo has been attached to the report",
+      });
     }
   };
 
@@ -49,13 +60,13 @@ const ReportIssueForm = ({ onBack }: ReportIssueFormProps) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call
+    // Simulate API call with realistic loading
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);
       toast({
-        title: "Issue Reported Successfully",
-        description: "Your report has been submitted and assigned ID #CIV-2024-001234",
+        title: "Report Submitted Successfully! 🎉",
+        description: "Your report has been assigned ID #CIV-2024-001234 and forwarded to the relevant department.",
       });
     }, 2000);
   };
@@ -63,21 +74,60 @@ const ReportIssueForm = ({ onBack }: ReportIssueFormProps) => {
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-gradient-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-md shadow-floating">
-          <CardContent className="pt-6 text-center">
-            <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="w-8 h-8 text-success" />
+        <Card className="w-full max-w-lg shadow-floating border-success/20 border-2 slide-in-up">
+          <CardContent className="pt-8 text-center">
+            <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6 pulse-primary">
+              <CheckCircle className="w-10 h-10 text-success" />
             </div>
-            <h3 className="text-2xl font-bold text-foreground mb-2">Report Submitted!</h3>
-            <p className="text-muted-foreground mb-6">
-              Your issue has been reported and assigned ID <strong>#CIV-2024-001234</strong>. 
-              You'll receive updates on the progress.
-            </p>
+            <h3 className="text-3xl font-bold text-foreground mb-4">Report Submitted Successfully!</h3>
+            <div className="glass p-6 rounded-lg mb-6">
+              <p className="text-muted-foreground mb-4">
+                Your issue has been reported and assigned tracking ID:
+              </p>
+              <div className="text-2xl font-mono font-bold text-primary bg-primary/10 px-4 py-2 rounded-lg">
+                #CIV-2024-001234
+              </div>
+            </div>
+            <div className="space-y-4 mb-8">
+              <div className="flex items-center gap-3 text-left">
+                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                  <Target className="w-4 h-4 text-primary" />
+                </div>
+                <span className="text-sm text-muted-foreground">Assigned to relevant department</span>
+              </div>
+              <div className="flex items-center gap-3 text-left">
+                <div className="w-8 h-8 bg-warning/10 rounded-full flex items-center justify-center">
+                  <Clock className="w-4 h-4 text-warning" />
+                </div>
+                <span className="text-sm text-muted-foreground">Expected response within 24-48 hours</span>
+              </div>
+              <div className="flex items-center gap-3 text-left">
+                <div className="w-8 h-8 bg-success/10 rounded-full flex items-center justify-center">
+                  <User className="w-4 h-4 text-success" />
+                </div>
+                <span className="text-sm text-muted-foreground">You'll receive updates via email</span>
+              </div>
+            </div>
             <div className="space-y-3">
-              <Button onClick={() => setIsSubmitted(false)} className="w-full">
+              <Button 
+                onClick={() => {
+                  setIsSubmitted(false);
+                  setFormData({
+                    title: "",
+                    category: "",
+                    description: "",
+                    location: "",
+                    priority: "medium",
+                    photo: null,
+                  });
+                }} 
+                className="w-full hover-lift group"
+              >
+                <Camera className="w-4 h-4 mr-2 group-hover:rotate-12 transition-smooth" />
                 Report Another Issue
               </Button>
-              <Button variant="outline" onClick={onBack} className="w-full">
+              <Button variant="outline" onClick={onBack} className="w-full hover-scale">
+                <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Home
               </Button>
             </div>
@@ -89,103 +139,145 @@ const ReportIssueForm = ({ onBack }: ReportIssueFormProps) => {
 
   return (
     <div className="min-h-screen bg-gradient-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center mb-6">
-          <Button variant="ghost" onClick={onBack} className="mr-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-          <h1 className="text-3xl font-bold text-foreground">Report an Issue</h1>
+      {/* Enhanced Header */}
+      <div className="glass border-b border-border sticky top-0 z-50 backdrop-blur-xl">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" onClick={onBack} className="hover-lift group">
+              <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-smooth" />
+              Back
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold gradient-text">Report an Issue</h1>
+              <p className="text-sm text-muted-foreground">Help improve your community</p>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <div className="max-w-2xl mx-auto">
-          <Card className="shadow-floating">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Camera className="w-5 h-5 text-primary" />
-                Issue Details
-              </CardTitle>
-              <CardDescription>
-                Provide details about the civic issue you'd like to report
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-3xl mx-auto">
+          {/* Progress Indicator */}
+          <div className="mb-8 slide-in-up">
+            <div className="flex items-center gap-4 glass p-4 rounded-lg">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-primary" />
+                <span className="font-medium text-foreground">Step 1: Report Details</span>
+              </div>
+              <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-primary w-1/3 rounded-full"></div>
+              </div>
+            </div>
+          </div>
+
+          <Card className="shadow-floating border-2 border-primary/10 hover:border-primary/20 transition-civic slide-in-up">
+            <CardHeader className="text-center pb-6">
+              <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-glow">
+                <Camera className="w-8 h-8 text-primary-foreground" />
+              </div>
+              <CardTitle className="text-2xl">Tell Us About the Issue</CardTitle>
+              <CardDescription className="text-base">
+                Provide detailed information to help us understand and address the problem quickly
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Issue Title *</Label>
+            
+            <CardContent className="space-y-8">
+              <form onSubmit={handleSubmit} className="space-y-8">
+                {/* Title Field */}
+                <div className="space-y-3 slide-in-left">
+                  <Label htmlFor="title" className="text-base font-semibold">Issue Title *</Label>
                   <Input
                     id="title"
-                    placeholder="e.g., Large pothole on Main Street"
+                    placeholder="e.g., Large pothole causing vehicle damage on Main Street"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    className="h-12 text-base hover:border-primary/50 focus:border-primary transition-civic"
                     required
                   />
+                  <p className="text-xs text-muted-foreground">Be specific and descriptive</p>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="category">Category *</Label>
+                {/* Category Selection */}
+                <div className="space-y-3 slide-in-right">
+                  <Label htmlFor="category" className="text-base font-semibold">Category *</Label>
                   <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select issue category" />
+                    <SelectTrigger className="h-12 text-base hover:border-primary/50 transition-civic">
+                      <SelectValue placeholder="Select the type of issue" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="glass">
                       {categories.map((category) => (
-                        <SelectItem key={category} value={category.toLowerCase()}>
-                          {category}
+                        <SelectItem key={category.value} value={category.value} className="hover:bg-primary/10 transition-civic">
+                          <div className="flex items-center gap-3">
+                            <span className="text-lg">{category.icon}</span>
+                            <span>{category.label}</span>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="location">Location *</Label>
+                {/* Location Field */}
+                <div className="space-y-3 slide-in-left">
+                  <Label htmlFor="location" className="text-base font-semibold">Location *</Label>
                   <div className="relative">
-                    <MapPin className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     <Input
                       id="location"
-                      placeholder="Street address or nearest intersection"
-                      className="pl-10"
+                      placeholder="Street address, intersection, or landmark"
+                      className="h-12 pl-12 text-base hover:border-primary/50 focus:border-primary transition-civic"
                       value={formData.location}
                       onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                       required
                     />
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    Location will be automatically detected when using mobile device
-                  </p>
+                  <div className="glass p-3 rounded-lg">
+                    <p className="text-sm text-muted-foreground flex items-center gap-2">
+                      <Target className="w-4 h-4" />
+                      Location will be automatically detected when using mobile device
+                    </p>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="priority">Priority Level</Label>
+                {/* Priority Selection */}
+                <div className="space-y-3 slide-in-right">
+                  <Label htmlFor="priority" className="text-base font-semibold">Priority Level</Label>
                   <Select value={formData.priority} onValueChange={(value) => setFormData({ ...formData, priority: value })}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12 text-base hover:border-primary/50 transition-civic">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="low">Low - Minor inconvenience</SelectItem>
-                      <SelectItem value="medium">Medium - Moderate issue</SelectItem>
-                      <SelectItem value="high">High - Safety concern</SelectItem>
-                      <SelectItem value="urgent">Urgent - Immediate attention needed</SelectItem>
+                    <SelectContent className="glass">
+                      {priorities.map((priority) => (
+                        <SelectItem key={priority.value} value={priority.value} className="hover:bg-primary/10 transition-civic">
+                          <div className="space-y-1">
+                            <div className={`font-medium ${priority.color}`}>{priority.label}</div>
+                            <div className="text-xs text-muted-foreground">{priority.desc}</div>
+                          </div>
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description *</Label>
+                {/* Description Field */}
+                <div className="space-y-3 slide-in-left">
+                  <Label htmlFor="description" className="text-base font-semibold">Detailed Description *</Label>
                   <Textarea
                     id="description"
-                    placeholder="Provide additional details about the issue..."
-                    rows={4}
+                    placeholder="Provide additional details: What exactly is the problem? When did you notice it? How is it affecting the community?"
+                    rows={6}
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    className="text-base hover:border-primary/50 focus:border-primary transition-civic resize-none"
                     required
                   />
+                  <p className="text-xs text-muted-foreground">The more details you provide, the faster we can resolve the issue</p>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="photo">Photo</Label>
-                  <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary transition-civic">
+                {/* Photo Upload */}
+                <div className="space-y-3 slide-in-right">
+                  <Label htmlFor="photo" className="text-base font-semibold">Photo Evidence</Label>
+                  <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-primary/50 transition-civic hover-lift glass">
                     <input
                       id="photo"
                       type="file"
@@ -193,28 +285,47 @@ const ReportIssueForm = ({ onBack }: ReportIssueFormProps) => {
                       onChange={handlePhotoUpload}
                       className="hidden"
                     />
-                    <label htmlFor="photo" className="cursor-pointer">
-                      <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground">
-                        {formData.photo ? formData.photo.name : "Click to upload a photo"}
+                    <label htmlFor="photo" className="cursor-pointer group">
+                      <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-civic">
+                        <Upload className="w-8 h-8 text-primary group-hover:scale-110 transition-spring" />
+                      </div>
+                      <p className="text-base font-medium text-foreground mb-2">
+                        {formData.photo ? `✅ ${formData.photo.name}` : "Click to upload a photo"}
                       </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Recommended for faster resolution
+                      <p className="text-sm text-muted-foreground">
+                        Photos help us understand and resolve issues faster
                       </p>
                     </label>
                   </div>
                 </div>
 
-                <div className="flex gap-4 pt-4">
-                  <Button type="button" variant="outline" onClick={onBack} className="flex-1">
+                {/* Form Actions */}
+                <div className="flex gap-4 pt-8 slide-in-up">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={onBack} 
+                    className="flex-1 h-12 hover-scale group"
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-smooth" />
                     Cancel
                   </Button>
                   <Button 
                     type="submit" 
                     disabled={isSubmitting || !formData.title || !formData.category || !formData.location || !formData.description}
-                    className="flex-1"
+                    className="flex-1 h-12 hover-lift group shadow-floating disabled:opacity-50"
                   >
-                    {isSubmitting ? "Submitting..." : "Submit Report"}
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin mr-2" />
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        <Camera className="w-4 h-4 mr-2 group-hover:rotate-12 transition-smooth" />
+                        Submit Report
+                      </>
+                    )}
                   </Button>
                 </div>
               </form>
