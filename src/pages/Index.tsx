@@ -169,7 +169,7 @@ const Index = () => {
               Building Better Communities Together
             </div>
             <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
-              Make Your <span className="gradient-text text-white">Voice</span> Heard
+              Make Your <span className="text-white">Voice</span> Heard
             </h2>
             <p className="text-xl md:text-2xl mb-12 opacity-95 max-w-4xl mx-auto leading-relaxed">
               Report civic issues, track progress in real-time, and help create positive change in your neighborhood with our advanced community platform

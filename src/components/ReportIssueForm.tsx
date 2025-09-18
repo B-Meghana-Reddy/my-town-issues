@@ -89,23 +89,32 @@ const ReportIssueForm = ({ onBack }: ReportIssueFormProps) => {
               </div>
             </div>
             <div className="space-y-4 mb-8">
-              <div className="flex items-center gap-3 text-left">
-                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                  <Target className="w-4 h-4 text-primary" />
+              <div className="flex items-center gap-3 text-left group hover-lift p-3 rounded-lg hover:bg-primary/5 transition-all duration-300">
+                <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow group-hover:scale-110 transition-transform">
+                  <Target className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-sm text-muted-foreground">Assigned to relevant department</span>
+                <div>
+                  <span className="text-sm font-medium text-foreground">Assigned to relevant department</span>
+                  <p className="text-xs text-muted-foreground">Automatic routing system in action</p>
+                </div>
               </div>
-              <div className="flex items-center gap-3 text-left">
-                <div className="w-8 h-8 bg-warning/10 rounded-full flex items-center justify-center">
-                  <Clock className="w-4 h-4 text-warning" />
+              <div className="flex items-center gap-3 text-left group hover-lift p-3 rounded-lg hover:bg-warning/5 transition-all duration-300">
+                <div className="w-10 h-10 bg-gradient-to-br from-warning to-warning/80 rounded-full flex items-center justify-center shadow-glow group-hover:scale-110 transition-transform">
+                  <Clock className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-sm text-muted-foreground">Expected response within 24-48 hours</span>
+                <div>
+                  <span className="text-sm font-medium text-foreground">Expected response within 24-48 hours</span>
+                  <p className="text-xs text-muted-foreground">Based on issue priority and department workload</p>
+                </div>
               </div>
-              <div className="flex items-center gap-3 text-left">
-                <div className="w-8 h-8 bg-success/10 rounded-full flex items-center justify-center">
-                  <User className="w-4 h-4 text-success" />
+              <div className="flex items-center gap-3 text-left group hover-lift p-3 rounded-lg hover:bg-success/5 transition-all duration-300">
+                <div className="w-10 h-10 bg-gradient-to-br from-success to-success/80 rounded-full flex items-center justify-center shadow-glow group-hover:scale-110 transition-transform">
+                  <User className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-sm text-muted-foreground">You'll receive updates via email</span>
+                <div>
+                  <span className="text-sm font-medium text-foreground">You'll receive updates via email</span>
+                  <p className="text-xs text-muted-foreground">Real-time notifications at every stage</p>
+                </div>
               </div>
             </div>
             <div className="space-y-3">
@@ -276,8 +285,12 @@ const ReportIssueForm = ({ onBack }: ReportIssueFormProps) => {
 
                 {/* Photo Upload */}
                 <div className="space-y-3 slide-in-right">
-                  <Label htmlFor="photo" className="text-base font-semibold">Photo Evidence</Label>
-                  <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-primary/50 transition-civic hover-lift glass">
+                  <Label htmlFor="photo" className="text-base font-semibold flex items-center gap-2">
+                    <Camera className="w-5 h-5 text-primary" />
+                    Photo Evidence
+                  </Label>
+                  <div className="relative border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-primary/50 transition-all duration-300 hover-lift glass group overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
                     <input
                       id="photo"
                       type="file"
@@ -285,16 +298,35 @@ const ReportIssueForm = ({ onBack }: ReportIssueFormProps) => {
                       onChange={handlePhotoUpload}
                       className="hidden"
                     />
-                    <label htmlFor="photo" className="cursor-pointer group">
-                      <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-civic">
-                        <Upload className="w-8 h-8 text-primary group-hover:scale-110 transition-spring" />
+                    <label htmlFor="photo" className="cursor-pointer relative z-10">
+                      <div className="w-20 h-20 bg-gradient-primary rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-floating group-hover:shadow-glow group-hover:scale-110 transition-all duration-300">
+                        <Upload className="w-10 h-10 text-white group-hover:rotate-12 transition-transform duration-300" />
                       </div>
-                      <p className="text-base font-medium text-foreground mb-2">
-                        {formData.photo ? `✅ ${formData.photo.name}` : "Click to upload a photo"}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Photos help us understand and resolve issues faster
-                      </p>
+                      <div className="space-y-2">
+                        <p className="text-lg font-semibold text-foreground">
+                          {formData.photo ? (
+                            <span className="flex items-center justify-center gap-2 text-success">
+                              <CheckCircle className="w-5 h-5" />
+                              {formData.photo.name}
+                            </span>
+                          ) : (
+                            "Click to upload a photo"
+                          )}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Photos help us understand and resolve issues faster
+                        </p>
+                        <div className="flex items-center justify-center gap-4 mt-4 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <span className="w-2 h-2 bg-success rounded-full"></span>
+                            JPG, PNG supported
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <span className="w-2 h-2 bg-primary rounded-full"></span>
+                            Max 10MB
+                          </span>
+                        </div>
+                      </div>
                     </label>
                   </div>
                 </div>

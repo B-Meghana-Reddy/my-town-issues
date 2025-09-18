@@ -150,18 +150,18 @@ const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
             <div className="flex items-center gap-4">
               <Button variant="ghost" onClick={onBack} className="hover-lift group">
                 <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-smooth" />
-                Back
+                Exit Admin Panel
               </Button>
               <div>
                 <h1 className="text-2xl font-bold gradient-text">Admin Dashboard</h1>
-                <p className="text-sm text-muted-foreground">Comprehensive issue management system</p>
+                <p className="text-sm text-muted-foreground">Municipal Issue Management & Oversight</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Badge className="bg-primary text-primary-foreground glass">
-                <Sparkles className="w-3 h-3 mr-1" />
-                Administrator View
-              </Badge>
+              <div className="flex items-center gap-2 glass px-4 py-2 rounded-lg">
+                <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium text-white">Admin Mode</span>
+              </div>
               <Button variant="outline" size="sm" className="hover-scale">
                 <BarChart className="w-4 h-4 mr-2" />
                 Export Data
