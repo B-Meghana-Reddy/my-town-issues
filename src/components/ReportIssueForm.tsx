@@ -8,11 +8,30 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, Camera, MapPin, Upload, CheckCircle, Sparkles, Target, Clock, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-interface ReportIssueFormProps {
-  onBack: () => void;
+interface Issue {
+  id: string;
+  title: string;
+  category: string;
+  location: string;
+  status: string;
+  priority: string;
+  date: string;
+  reportedBy?: string;
+  assignedTo?: string;
+  description: string;
+  reporterContact?: string;
+  estimatedCompletion?: string;
+  imageUrl?: string;
+  lat?: number;
+  lng?: number;
 }
 
-const ReportIssueForm = ({ onBack }: ReportIssueFormProps) => {
+interface ReportIssueFormProps {
+  onBack: () => void;
+  onIssueSubmitted: (issue: Issue) => void;
+}
+
+const ReportIssueForm = ({ onBack, onIssueSubmitted }: ReportIssueFormProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     title: "",
@@ -64,13 +83,56 @@ const ReportIssueForm = ({ onBack }: ReportIssueFormProps) => {
     
     // Simulate API call with realistic loading
     setTimeout(() => {
+      const issueId = `CIV-2024-${String(Date.now()).slice(-6)}`;
+      
+      // Create new issue object
+      const newIssue: Issue = {
+        id: issueId,
+        title: formData.title,
+        category: formData.category,
+        location: formData.location,
+        status: "Pending",
+        priority: formData.priority.charAt(0).toUpperCase() + formData.priority.slice(1),
+        date: new Date().toISOString().split('T')[0],
+        reportedBy: "Current User",
+        assignedTo: getAssignedDepartment(formData.category),
+        description: formData.description,
+        reporterContact: "user@email.com",
+        estimatedCompletion: getEstimatedCompletion(formData.priority),
+        imageUrl: formData.photoUrl,
+        lat: 16.3067 + (Math.random() - 0.5) * 0.01, // Random location near Guntur
+        lng: 80.4365 + (Math.random() - 0.5) * 0.01
+      };
+      
+      // Add to shared state
+      onIssueSubmitted(newIssue);
+      
       setIsSubmitting(false);
       setIsSubmitted(true);
       toast({
         title: "Report Submitted Successfully! 🎉",
-        description: "Your report has been assigned ID #CIV-2024-001234 and forwarded to the relevant department.",
+        description: `Your report has been assigned ID ${issueId} and forwarded to the relevant department.`,
       });
     }, 2000);
+  };
+
+  const getAssignedDepartment = (category: string) => {
+    switch (category) {
+      case "pothole":
+      case "sidewalk": return "Public Works";
+      case "streetlight":
+      case "traffic": return "Electrical Dept";
+      case "trash": return "Sanitation";
+      case "water": return "Water Dept";
+      default: return "Maintenance";
+    }
+  };
+
+  const getEstimatedCompletion = (priority: string) => {
+    const today = new Date();
+    const days = priority === "urgent" ? 1 : priority === "high" ? 3 : priority === "medium" ? 7 : 14;
+    today.setDate(today.getDate() + days);
+    return today.toISOString().split('T')[0];
   };
 
   if (isSubmitted) {
