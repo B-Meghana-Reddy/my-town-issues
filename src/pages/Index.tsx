@@ -8,95 +8,9 @@ import ReportIssueForm from "@/components/ReportIssueForm";
 import AdminDashboard from "@/components/AdminDashboard";
 import IssueMap from "@/components/IssueMap";
 
-export interface Issue {
-  id: string;
-  title: string;
-  category: string;
-  location: string;
-  status: string;
-  priority: string;
-  date: string;
-  reportedBy?: string;
-  assignedTo?: string;
-  description: string;
-  reporterContact?: string;
-  estimatedCompletion?: string;
-  imageUrl?: string;
-  lat?: number;
-  lng?: number;
-}
-
 const Index = () => {
   const [currentView, setCurrentView] = useState<'home' | 'report' | 'admin' | 'map'>('home');
   const [userRole, setUserRole] = useState<'citizen' | 'admin'>('citizen');
-  
-  // Shared issues state
-  const [issues, setIssues] = useState<Issue[]>([
-    { 
-      id: "CIV-2024-001234", 
-      title: "Large pothole causing vehicle damage", 
-      category: "Pothole", 
-      location: "Main St & 1st Ave", 
-      status: "In Progress", 
-      priority: "High", 
-      date: "2024-01-15",
-      reportedBy: "Sarah J.",
-      assignedTo: "Public Works",
-      description: "Deep pothole causing damage to vehicles, needs immediate attention",
-      reporterContact: "sarah.johnson@email.com",
-      estimatedCompletion: "2024-01-17",
-      imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
-      lat: 16.3067,
-      lng: 80.4365
-    },
-    { 
-      id: "CIV-2024-001235", 
-      title: "Broken streetlight creating safety hazard", 
-      category: "Streetlight", 
-      location: "Central Park, North Entrance", 
-      status: "Resolved", 
-      priority: "Medium", 
-      date: "2024-01-14",
-      reportedBy: "Mike R.",
-      assignedTo: "Electrical Dept",
-      description: "Streetlight flickering and unsafe for pedestrians at night",
-      reporterContact: "mike.rodriguez@email.com",
-      estimatedCompletion: "Completed",
-      imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop",
-      lat: 16.3100,
-      lng: 80.4400
-    },
-    { 
-      id: "CIV-2024-001236", 
-      title: "Graffiti vandalism on public building", 
-      category: "Graffiti", 
-      location: "City Hall, West Wall", 
-      status: "Pending", 
-      priority: "Low", 
-      date: "2024-01-13",
-      reportedBy: "Alex K.",
-      assignedTo: "Maintenance",
-      description: "Large graffiti tag requiring professional cleaning",
-      reporterContact: "anna.kim@email.com",
-      estimatedCompletion: "2024-01-20",
-      lat: 16.3050,
-      lng: 80.4350
-    },
-  ]);
-
-  const addNewIssue = (newIssue: Issue) => {
-    setIssues(prevIssues => [newIssue, ...prevIssues]);
-  };
-
-  const updateIssueStatus = (issueId: string, newStatus: string) => {
-    setIssues(prevIssues => 
-      prevIssues.map(issue => 
-        issue.id === issueId 
-          ? { ...issue, status: newStatus.charAt(0).toUpperCase() + newStatus.slice(1).replace("-", " ") }
-          : issue
-      )
-    );
-  };
 
   // Mock data for demonstration
   const stats = [
@@ -138,27 +52,35 @@ const Index = () => {
     },
   ];
 
-  // Use the first 3 issues for recent issues display
-  const recentIssues = issues.slice(0, 3).map(issue => ({
-    id: issue.id,
-    type: issue.category,
-    location: issue.location,
-    status: issue.status,
-    priority: issue.priority,
-    date: formatDate(issue.date),
-    reportedBy: issue.reportedBy || "Anonymous"
-  }));
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 1) return "1 day ago";
-    if (diffDays === 0) return "Today";
-    return `${diffDays} days ago`;
-  };
+  const recentIssues = [
+    { 
+      id: 1, 
+      type: "Pothole", 
+      location: "Main St & 1st Ave", 
+      status: "In Progress", 
+      priority: "High", 
+      date: "2 hours ago",
+      reportedBy: "Sarah J."
+    },
+    { 
+      id: 2, 
+      type: "Streetlight", 
+      location: "Park Ave", 
+      status: "Resolved", 
+      priority: "Medium", 
+      date: "1 day ago",
+      reportedBy: "Mike R."
+    },
+    { 
+      id: 3, 
+      type: "Graffiti", 
+      location: "City Hall", 
+      status: "Pending", 
+      priority: "Low", 
+      date: "3 days ago",
+      reportedBy: "Alex K."
+    },
+  ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -179,22 +101,11 @@ const Index = () => {
   };
 
   if (currentView === 'report') {
-    return (
-      <ReportIssueForm 
-        onBack={() => setCurrentView('home')} 
-        onIssueSubmitted={addNewIssue}
-      />
-    );
+    return <ReportIssueForm onBack={() => setCurrentView('home')} />;
   }
 
   if (currentView === 'admin') {
-    return (
-      <AdminDashboard 
-        onBack={() => setCurrentView('home')} 
-        issues={issues}
-        onStatusUpdate={updateIssueStatus}
-      />
-    );
+    return <AdminDashboard onBack={() => setCurrentView('home')} />;
   }
 
   if (currentView === 'map') {

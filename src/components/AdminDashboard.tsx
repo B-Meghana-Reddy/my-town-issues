@@ -6,34 +6,73 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, Filter, TrendingUp, Users, MapPin, Clock, AlertTriangle, CheckCircle, Eye, Sparkles, BarChart, Target, Zap, ArrowRight } from "lucide-react";
 import GunturMap from "./GunturMap";
 
-interface Issue {
-  id: string;
-  title: string;
-  category: string;
-  location: string;
-  status: string;
-  priority: string;
-  date: string;
-  reportedBy?: string;
-  assignedTo?: string;
-  description: string;
-  reporterContact?: string;
-  estimatedCompletion?: string;
-  imageUrl?: string;
-  lat?: number;
-  lng?: number;
-}
-
 interface AdminDashboardProps {
   onBack: () => void;
-  issues: Issue[];
-  onStatusUpdate: (issueId: string, newStatus: string) => void;
 }
 
-const AdminDashboard = ({ onBack, issues, onStatusUpdate }: AdminDashboardProps) => {
+const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterPriority, setFilterPriority] = useState("all");
+
+  // Mock data for demonstration
+  const [issues, setIssues] = useState([
+    {
+      id: "CIV-2024-001234",
+      title: "Large pothole causing vehicle damage",
+      category: "Pothole",
+      location: "Main St & 1st Ave",
+      status: "In Progress",
+      priority: "High",
+      date: "2024-01-15",
+      assignedTo: "Public Works",
+      description: "Deep pothole causing damage to vehicles, needs immediate attention",
+      reporterContact: "sarah.johnson@email.com",
+      estimatedCompletion: "2024-01-17",
+      imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop"
+    },
+    {
+      id: "CIV-2024-001235",
+      title: "Broken streetlight creating safety hazard",
+      category: "Streetlight",
+      location: "Central Park, North Entrance",
+      status: "Resolved",
+      priority: "Medium",
+      date: "2024-01-14",
+      assignedTo: "Electrical Dept",
+      description: "Streetlight flickering and unsafe for pedestrians at night",
+      reporterContact: "mike.rodriguez@email.com",
+      estimatedCompletion: "Completed",
+      imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop"
+    },
+    {
+      id: "CIV-2024-001236",
+      title: "Graffiti vandalism on public building",
+      category: "Graffiti",
+      location: "City Hall, West Wall",
+      status: "Pending",
+      priority: "Low",
+      date: "2024-01-13",
+      assignedTo: "Maintenance",
+      description: "Large graffiti tag requiring professional cleaning",
+      reporterContact: "anna.kim@email.com",
+      estimatedCompletion: "2024-01-20"
+    },
+    {
+      id: "CIV-2024-001237",
+      title: "Overflowing waste bin attracting pests",
+      category: "Trash/Litter",
+      location: "Bus Stop, Oak Avenue",
+      status: "Urgent",
+      priority: "High",
+      date: "2024-01-15",
+      assignedTo: "Sanitation",
+      description: "Trash bin overflowing for several days, creating health hazard",
+      reporterContact: "robert.chen@email.com",
+      estimatedCompletion: "2024-01-16",
+      imageUrl: "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&h=300&fit=crop"
+    }
+  ]);
 
   const departments = [
     { 
@@ -100,7 +139,13 @@ const AdminDashboard = ({ onBack, issues, onStatusUpdate }: AdminDashboardProps)
   };
 
   const handleStatusChange = (issueId: string, newStatus: string) => {
-    onStatusUpdate(issueId, newStatus);
+    setIssues(prevIssues => 
+      prevIssues.map(issue => 
+        issue.id === issueId 
+          ? { ...issue, status: newStatus.charAt(0).toUpperCase() + newStatus.slice(1).replace("-", " ") }
+          : issue
+      )
+    );
   };
 
   const filteredIssues = issues.filter(issue => {
@@ -445,7 +490,7 @@ const AdminDashboard = ({ onBack, issues, onStatusUpdate }: AdminDashboardProps)
             </Card>
 
             {/* Guntur City Map */}
-            <GunturMap issues={issues} />
+            <GunturMap />
 
             {/* Quick Actions Card */}
             <Card className="shadow-floating border-2 border-primary/10 hover:border-primary/20 transition-civic slide-in-right glass">

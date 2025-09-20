@@ -1,35 +1,14 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Navigation, Zap, AlertTriangle } from "lucide-react";
 
-interface Issue {
-  id: string;
-  title: string;
-  category: string;
-  location: string;
-  status: string;
-  priority: string;
-  date: string;
-  lat?: number;
-  lng?: number;
-}
-
-interface GunturMapProps {
-  issues?: Issue[];
-}
-
-const GunturMap = ({ issues = [] }: GunturMapProps) => {
-  // Convert issues to map locations
-  const issueLocations = issues
-    .filter(issue => issue.lat && issue.lng)
-    .map(issue => ({
-      id: issue.id,
-      lat: issue.lat!,
-      lng: issue.lng!,
-      type: issue.category.toLowerCase(),
-      priority: issue.priority.toLowerCase(),
-      title: issue.title,
-      status: issue.status
-    }));
+const GunturMap = () => {
+  // Mock issue locations in Guntur
+  const issueLocations = [
+    { id: 1, lat: 16.3067, lng: 80.4365, type: "pothole", priority: "high", title: "Major Pothole" },
+    { id: 2, lat: 16.3100, lng: 80.4400, type: "streetlight", priority: "medium", title: "Broken Streetlight" },
+    { id: 3, lat: 16.3050, lng: 80.4350, type: "graffiti", priority: "low", title: "Graffiti Removal" },
+    { id: 4, lat: 16.3080, lng: 80.4380, type: "trash", priority: "high", title: "Overflowing Bin" },
+  ];
 
   const getIssueColor = (priority: string) => {
     switch (priority) {
@@ -152,11 +131,11 @@ const GunturMap = ({ issues = [] }: GunturMapProps) => {
         <div className="mt-4 p-4 glass rounded-lg">
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
-              <p className="text-2xl font-bold text-error">{issueLocations.length}</p>
+              <p className="text-2xl font-bold text-error">4</p>
               <p className="text-xs text-muted-foreground">Active Issues</p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-primary">{Math.max(12, issueLocations.length * 3)}</p>
+              <p className="text-2xl font-bold text-primary">12</p>
               <p className="text-xs text-muted-foreground">Areas Covered</p>
             </div>
             <div>
