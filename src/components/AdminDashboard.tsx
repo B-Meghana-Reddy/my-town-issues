@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Filter, TrendingUp, Users, MapPin, Clock, AlertTriangle, CheckCircle, Eye, Sparkles, BarChart, Target, Zap, ArrowRight } from "lucide-react";
+import GunturMap from "./GunturMap";
 
 interface AdminDashboardProps {
   onBack: () => void;
@@ -487,6 +488,9 @@ const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Guntur City Map */}
+            <GunturMap />
 
             {/* Quick Actions Card */}
             <Card className="shadow-floating border-2 border-primary/10 hover:border-primary/20 transition-civic slide-in-right glass">
