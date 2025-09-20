@@ -15,7 +15,7 @@ const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   const [filterPriority, setFilterPriority] = useState("all");
 
   // Mock data for demonstration
-  const issues = [
+  const [issues, setIssues] = useState([
     {
       id: "CIV-2024-001234",
       title: "Large pothole causing vehicle damage",
@@ -27,7 +27,8 @@ const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       assignedTo: "Public Works",
       description: "Deep pothole causing damage to vehicles, needs immediate attention",
       reporterContact: "sarah.johnson@email.com",
-      estimatedCompletion: "2024-01-17"
+      estimatedCompletion: "2024-01-17",
+      imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop"
     },
     {
       id: "CIV-2024-001235",
@@ -40,7 +41,8 @@ const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       assignedTo: "Electrical Dept",
       description: "Streetlight flickering and unsafe for pedestrians at night",
       reporterContact: "mike.rodriguez@email.com",
-      estimatedCompletion: "Completed"
+      estimatedCompletion: "Completed",
+      imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop"
     },
     {
       id: "CIV-2024-001236",
@@ -66,9 +68,10 @@ const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       assignedTo: "Sanitation",
       description: "Trash bin overflowing for several days, creating health hazard",
       reporterContact: "robert.chen@email.com",
-      estimatedCompletion: "2024-01-16"
+      estimatedCompletion: "2024-01-16",
+      imageUrl: "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&h=300&fit=crop"
     }
-  ];
+  ]);
 
   const departments = [
     { 
@@ -132,6 +135,16 @@ const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       case "error": return "text-error bg-error/10 border-error/20";
       default: return "text-muted-foreground bg-muted/10 border-muted/20";
     }
+  };
+
+  const handleStatusChange = (issueId: string, newStatus: string) => {
+    setIssues(prevIssues => 
+      prevIssues.map(issue => 
+        issue.id === issueId 
+          ? { ...issue, status: newStatus.charAt(0).toUpperCase() + newStatus.slice(1).replace("-", " ") }
+          : issue
+      )
+    );
   };
 
   const filteredIssues = issues.filter(issue => {
@@ -363,6 +376,17 @@ const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                               <span className="font-medium">ID:</span> {issue.id} • 
                               <span className="font-medium"> Description:</span> {issue.description}
                             </p>
+                            
+                            {issue.imageUrl && (
+                              <div className="mt-4">
+                                <p className="text-sm font-medium text-foreground mb-2">Photo Evidence:</p>
+                                <img 
+                                  src={issue.imageUrl} 
+                                  alt="Issue evidence" 
+                                  className="w-full max-w-sm h-32 object-cover rounded-lg border border-border shadow-sm hover:shadow-md transition-shadow"
+                                />
+                              </div>
+                            )}
                           </div>
                           
                           <div className="flex flex-col gap-3">
@@ -371,7 +395,10 @@ const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                               View
                               <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-smooth" />
                             </Button>
-                            <Select defaultValue={issue.status.toLowerCase().replace(" ", "-")}>
+                            <Select 
+                              defaultValue={issue.status.toLowerCase().replace(" ", "-")} 
+                              onValueChange={(value) => handleStatusChange(issue.id, value)}
+                            >
                               <SelectTrigger className="w-[120px] hover:border-primary/50 transition-civic">
                                 <SelectValue />
                               </SelectTrigger>
@@ -379,6 +406,7 @@ const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                                 <SelectItem value="pending">Pending</SelectItem>
                                 <SelectItem value="in-progress">In Progress</SelectItem>
                                 <SelectItem value="resolved">Resolved</SelectItem>
+                                <SelectItem value="urgent">Urgent</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>

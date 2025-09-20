@@ -21,6 +21,7 @@ const ReportIssueForm = ({ onBack }: ReportIssueFormProps) => {
     location: "",
     priority: "medium",
     photo: null as File | null,
+    photoUrl: "" as string,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -48,7 +49,8 @@ const ReportIssueForm = ({ onBack }: ReportIssueFormProps) => {
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setFormData({ ...formData, photo: file });
+      const photoUrl = URL.createObjectURL(file);
+      setFormData({ ...formData, photo: file, photoUrl });
       toast({
         title: "Photo Added",
         description: "Your photo has been attached to the report",
@@ -121,14 +123,15 @@ const ReportIssueForm = ({ onBack }: ReportIssueFormProps) => {
               <Button 
                 onClick={() => {
                   setIsSubmitted(false);
-                  setFormData({
-                    title: "",
-                    category: "",
-                    description: "",
-                    location: "",
-                    priority: "medium",
-                    photo: null,
-                  });
+                    setFormData({
+                      title: "",
+                      category: "",
+                      description: "",
+                      location: "",
+                      priority: "medium",
+                      photo: null,
+                      photoUrl: "",
+                    });
                 }} 
                 className="w-full hover-lift group"
               >
@@ -313,6 +316,15 @@ const ReportIssueForm = ({ onBack }: ReportIssueFormProps) => {
                             "Click to upload a photo"
                           )}
                         </p>
+                        {formData.photoUrl && (
+                          <div className="mt-4">
+                            <img 
+                              src={formData.photoUrl} 
+                              alt="Preview" 
+                              className="max-w-full h-32 object-cover rounded-lg border border-border shadow-sm"
+                            />
+                          </div>
+                        )}
                         <p className="text-sm text-muted-foreground">
                           Photos help us understand and resolve issues faster
                         </p>
