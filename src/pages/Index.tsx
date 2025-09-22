@@ -138,17 +138,6 @@ const Index = () => {
     },
   ];
 
-  // Use the first 3 issues for recent issues display
-  const recentIssues = issues.slice(0, 3).map(issue => ({
-    id: issue.id,
-    type: issue.category,
-    location: issue.location,
-    status: issue.status,
-    priority: issue.priority,
-    date: formatDate(issue.date),
-    reportedBy: issue.reportedBy || "Anonymous"
-  }));
-
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     const now = new Date();
@@ -159,6 +148,17 @@ const Index = () => {
     if (diffDays === 0) return "Today";
     return `${diffDays} days ago`;
   };
+
+  // Use the first 3 issues for recent issues display
+  const recentIssues = issues.slice(0, 3).map(issue => ({
+    id: issue.id,
+    type: issue.category,
+    location: issue.location,
+    status: issue.status,
+    priority: issue.priority,
+    date: formatDate(issue.date),
+    reportedBy: issue.reportedBy || "Anonymous"
+  }));
 
   const getStatusColor = (status: string) => {
     switch (status) {
