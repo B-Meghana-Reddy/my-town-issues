@@ -138,7 +138,7 @@ const Index = () => {
     },
   ];
 
-  const formatDate = (dateStr: string) => {
+  function formatDate(dateStr: string) {
     const date = new Date(dateStr);
     const now = new Date();
     const diffTime = Math.abs(now.getTime() - date.getTime());
@@ -147,8 +147,7 @@ const Index = () => {
     if (diffDays === 1) return "1 day ago";
     if (diffDays === 0) return "Today";
     return `${diffDays} days ago`;
-  };
-
+  }
   // Use the first 3 issues for recent issues display
   const recentIssues = issues.slice(0, 3).map(issue => ({
     id: issue.id,
