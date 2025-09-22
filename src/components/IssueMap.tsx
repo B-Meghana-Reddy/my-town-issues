@@ -5,88 +5,72 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, MapPin, Filter, Layers, Sparkles, TrendingUp, Navigation, Zap, Target, Eye } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-interface IssueMapProps {
-  onBack: () => void;
+interface Issue {
+  id: string;
+  title: string;
+  category: string;
+  location: string;
+  status: string;
+  priority: string;
+  date: string;
+  reportedBy?: string;
+  assignedTo?: string;
+  description: string;
+  reporterContact?: string;
+  estimatedCompletion?: string;
+  imageUrl?: string;
+  lat?: number;
+  lng?: number;
 }
 
-const IssueMap = ({ onBack }: IssueMapProps) => {
+interface IssueMapProps {
+  onBack: () => void;
+  issues: Issue[];
+}
+
+const IssueMap = ({ onBack, issues }: IssueMapProps) => {
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
   const [viewMode, setViewMode] = useState("standard");
 
-  // Mock data for map markers with more details
-  const mapIssues = [
-    { 
-      id: 1, 
-      lat: 40.7128, 
-      lng: -74.0060, 
-      type: "Pothole", 
-      status: "In Progress", 
-      priority: "High",
-      title: "Large pothole on Main Street",
-      reportedBy: "Sarah J.",
-      date: "2 hours ago"
-    },
-    { 
-      id: 2, 
-      lat: 40.7589, 
-      lng: -73.9851, 
-      type: "Streetlight", 
-      status: "Resolved", 
-      priority: "Medium",
-      title: "Broken streetlight in park",
-      reportedBy: "Mike R.",
-      date: "1 day ago"
-    },
-    { 
-      id: 3, 
-      lat: 40.7505, 
-      lng: -73.9934, 
-      type: "Graffiti", 
-      status: "Pending", 
-      priority: "Low",
-      title: "Graffiti on building wall",
-      reportedBy: "Alex K.",
-      date: "3 days ago"
-    },
-    { 
-      id: 4, 
-      lat: 40.7282, 
-      lng: -73.7949, 
-      type: "Trash", 
-      status: "Urgent", 
-      priority: "High",
-      title: "Overflowing trash bin",
-      reportedBy: "Anna C.",
-      date: "5 hours ago"
-    },
-    { 
-      id: 5, 
-      lat: 40.7410, 
-      lng: -73.9897, 
-      type: "Traffic Signal", 
-      status: "In Progress", 
-      priority: "High",
-      title: "Malfunctioning traffic light",
-      reportedBy: "David L.",
-      date: "6 hours ago"
-    },
-  ];
+  // Use real issues data with proper coordinates for Guntur
+  const mapIssues = issues.map((issue, index) => ({
+    id: issue.id,
+    lat: issue.lat || (16.3067 + (index * 0.005) - 0.01),
+    lng: issue.lng || (80.4365 + (index * 0.005) - 0.01),
+    type: issue.category,
+    status: issue.status,
+    priority: issue.priority,
+    title: issue.title,
+    reportedBy: issue.reportedBy || "Anonymous",
+    date: formatDateForMap(issue.date)
+  }));
+
+  function formatDateForMap(dateStr: string) {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "1 day ago";
+    return `${diffDays} days ago`;
+  }
 
   const mapStats = [
-    { label: "Total Issues", value: 47, color: "primary", trend: "+3" },
-    { label: "Resolved", value: 24, color: "success", trend: "+8" },
-    { label: "In Progress", value: 15, color: "warning", trend: "+2" },
-    { label: "Urgent", value: 8, color: "error", trend: "+1" },
+    { label: "Total Issues", value: issues.length, color: "primary", trend: "+3" },
+    { label: "Resolved", value: issues.filter(i => i.status === "Resolved").length, color: "success", trend: "+8" },
+    { label: "In Progress", value: issues.filter(i => i.status === "In Progress").length, color: "warning", trend: "+2" },
+    { label: "Urgent", value: issues.filter(i => i.priority === "High" || i.status === "Urgent").length, color: "error", trend: "+1" },
   ];
 
   const categories = [
-    { value: "all", label: "All Categories", icon: "🗺️", count: 47 },
-    { value: "pothole", label: "Potholes", icon: "🕳️", count: 12 },
-    { value: "streetlight", label: "Streetlights", icon: "💡", count: 8 },
-    { value: "graffiti", label: "Graffiti", icon: "🎨", count: 5 },
-    { value: "trash", label: "Trash/Litter", icon: "🗑️", count: 15 },
-    { value: "traffic", label: "Traffic", icon: "🚦", count: 7 },
+    { value: "all", label: "All Categories", icon: "🗺️", count: issues.length },
+    { value: "pothole", label: "Potholes", icon: "🕳️", count: issues.filter(i => i.category.toLowerCase() === "pothole").length },
+    { value: "streetlight", label: "Streetlights", icon: "💡", count: issues.filter(i => i.category.toLowerCase() === "streetlight").length },
+    { value: "graffiti", label: "Graffiti", icon: "🎨", count: issues.filter(i => i.category.toLowerCase() === "graffiti").length },
+    { value: "trash", label: "Trash/Litter", icon: "🗑️", count: issues.filter(i => i.category.toLowerCase().includes("trash")).length },
+    { value: "traffic", label: "Traffic", icon: "🚦", count: issues.filter(i => i.category.toLowerCase().includes("traffic")).length },
   ];
 
   const getStatusColor = (status: string) => {

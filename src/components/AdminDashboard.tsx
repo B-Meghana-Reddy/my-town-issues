@@ -101,6 +101,15 @@ const AdminDashboard = ({ onBack, issues, onStatusUpdate }: AdminDashboardProps)
 
   const handleStatusChange = (issueId: string, newStatus: string) => {
     onStatusUpdate(issueId, newStatus);
+    
+    // Show notification when issue is resolved
+    if (newStatus === "resolved") {
+      // Simulate sending notification to user
+      const issue = issues.find(i => i.id === issueId);
+      if (issue) {
+        alert(`✅ Issue "${issue.title}" has been marked as resolved!\n\nNotification sent to: ${issue.reporterContact || 'user@email.com'}\n\nThe citizen who reported this issue will receive an email update.`);
+      }
+    }
   };
 
   const filteredIssues = issues.filter(issue => {
@@ -346,7 +355,30 @@ const AdminDashboard = ({ onBack, issues, onStatusUpdate }: AdminDashboardProps)
                           </div>
                           
                           <div className="flex flex-col gap-3">
-                            <Button size="sm" variant="outline" className="hover-lift group min-w-[100px]">
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="hover-lift group min-w-[100px]"
+                              onClick={() => {
+                                // Show detailed issue view
+                                const issueDetails = `
+Issue Details:
+ID: ${issue.id}
+Title: ${issue.title}
+Category: ${issue.category}
+Location: ${issue.location}
+Status: ${issue.status}
+Priority: ${issue.priority}
+Reported by: ${issue.reportedBy}
+Assigned to: ${issue.assignedTo}
+Description: ${issue.description}
+Reporter Contact: ${issue.reporterContact}
+Estimated Completion: ${issue.estimatedCompletion}
+Date Reported: ${issue.date}
+                                `;
+                                alert(issueDetails);
+                              }}
+                            >
                               <Eye className="w-4 h-4 mr-1" />
                               View
                               <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-smooth" />

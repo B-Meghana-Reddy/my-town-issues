@@ -96,6 +96,12 @@ const Index = () => {
           : issue
       )
     );
+
+    // Show notification when issue is resolved
+    if (newStatus === "resolved") {
+      // In a real app, this would send notifications to users
+      console.log(`Issue ${issueId} has been resolved - User notification sent`);
+    }
   };
 
   // Mock data for demonstration
@@ -197,7 +203,7 @@ const Index = () => {
   }
 
   if (currentView === 'map') {
-    return <IssueMap onBack={() => setCurrentView('home')} />;
+    return <IssueMap onBack={() => setCurrentView('home')} issues={issues} />;
   }
 
   return (
@@ -384,16 +390,29 @@ const Index = () => {
                         variant="outline" 
                         size="sm" 
                         className="hover-lift group"
+                        onClick={() => setCurrentView('map')}
                       >
-                        View Details
+                        View on Map
                         <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-smooth" />
                       </Button>
                       <Button 
                         variant="ghost" 
                         size="sm" 
                         className="hover-glow"
+                        onClick={() => {
+                          // Toggle follow functionality - store in localStorage for demo
+                          const followedIssues = JSON.parse(localStorage.getItem('followedIssues') || '[]');
+                          const isFollowing = followedIssues.includes(issue.id);
+                          if (isFollowing) {
+                            const updated = followedIssues.filter((id: string) => id !== issue.id);
+                            localStorage.setItem('followedIssues', JSON.stringify(updated));
+                          } else {
+                            followedIssues.push(issue.id);
+                            localStorage.setItem('followedIssues', JSON.stringify(followedIssues));
+                          }
+                        }}
                       >
-                        Follow
+                        {JSON.parse(localStorage.getItem('followedIssues') || '[]').includes(issue.id) ? 'Unfollow' : 'Follow'}
                       </Button>
                     </div>
                   </div>
