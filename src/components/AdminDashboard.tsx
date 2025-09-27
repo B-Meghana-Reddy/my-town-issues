@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Filter, TrendingUp, Users, MapPin, Clock, AlertTriangle, CheckCircle, Eye, Sparkles, BarChart, Target, Zap, ArrowRight } from "lucide-react";
+import { ArrowLeft, Filter, TrendingUp, Users, MapPin, Clock, AlertTriangle, CheckCircle, Eye, Sparkles, BarChart, Target, Zap, ArrowRight, Download } from "lucide-react";
+import { generateOverallReport } from "@/utils/reportGenerator";
+import { useToast } from "@/hooks/use-toast";
 import GunturMap from "./GunturMap";
 
 interface Issue {
@@ -34,6 +36,8 @@ const AdminDashboard = ({ onBack, issues, onStatusUpdate }: AdminDashboardProps)
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterPriority, setFilterPriority] = useState("all");
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const { toast } = useToast();
 
   const departments = [
     { 
@@ -109,6 +113,34 @@ const AdminDashboard = ({ onBack, issues, onStatusUpdate }: AdminDashboardProps)
       if (issue) {
         alert(`✅ Issue "${issue.title}" has been marked as resolved!\n\nNotification sent to: ${issue.reporterContact || 'user@email.com'}\n\nThe citizen who reported this issue will receive an email update.`);
       }
+    }
+  };
+
+  const handleGenerateReport = async () => {
+    setIsGeneratingReport(true);
+    
+    try {
+      const result = await generateOverallReport(issues);
+      
+      if (result.success) {
+        toast({
+          title: "Report Generated Successfully!",
+          description: result.message,
+          duration: 5000,
+        });
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      toast({
+        title: "Report Generation Failed",
+        description: "Unable to generate report. Please try again.",
+        variant: "destructive",
+        duration: 5000,
+      });
+      console.error('Report generation error:', error);
+    } finally {
+      setIsGeneratingReport(false);
     }
   };
 
@@ -490,10 +522,24 @@ Date Reported: ${issue.date}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button className="w-full hover-lift group" variant="outline">
-                  <BarChart className="w-4 h-4 mr-2 group-hover:scale-110 transition-spring" />
-                  Generate Report
-                  <ArrowRight className="w-4 h-4 ml-auto group-hover:translate-x-1 transition-smooth" />
+                <Button 
+                  className="w-full hover-lift group" 
+                  variant="outline"
+                  onClick={handleGenerateReport}
+                  disabled={isGeneratingReport}
+                >
+                  {isGeneratingReport ? (
+                    <>
+                      <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-4 h-4 mr-2 group-hover:scale-110 transition-spring" />
+                      Generate Report
+                      <ArrowRight className="w-4 h-4 ml-auto group-hover:translate-x-1 transition-smooth" />
+                    </>
+                  )}
                 </Button>
                 <Button className="w-full hover-lift group" variant="outline">
                   <Users className="w-4 h-4 mr-2 group-hover:scale-110 transition-spring" />
