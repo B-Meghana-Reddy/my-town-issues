@@ -7,6 +7,8 @@ import heroImage from "@/assets/civic-hero.jpg";
 import ReportIssueForm from "@/components/ReportIssueForm";
 import AdminDashboard from "@/components/AdminDashboard";
 import IssueMap from "@/components/IssueMap";
+import LiveMap from "@/components/LiveMap";
+import { useToast } from "@/hooks/use-toast";
 
 export interface Issue {
   id: string;
@@ -29,6 +31,7 @@ export interface Issue {
 const Index = () => {
   const [currentView, setCurrentView] = useState<'home' | 'report' | 'admin' | 'map'>('home');
   const [userRole, setUserRole] = useState<'citizen' | 'admin'>('citizen');
+  const { toast } = useToast();
   
   // Shared issues state
   const [issues, setIssues] = useState<Issue[]>([
@@ -431,6 +434,32 @@ const Index = () => {
               View All Issues on Map
               <MapPin className="w-5 h-5 ml-2 group-hover:bounce transition-spring" />
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Live Issues Map Section */}
+      <section className="py-16 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12 slide-in-up">
+            <h3 className="text-4xl font-bold text-foreground mb-6">Live Issue Map</h3>
+            <p className="text-muted-foreground max-w-3xl mx-auto text-lg">
+              Explore reported issues in real-time with our interactive map. Track your location and see nearby community reports.
+            </p>
+          </div>
+          
+          <div className="slide-in-up">
+            <LiveMap 
+              issues={issues} 
+              onIssueSelect={(issue) => {
+                toast({
+                  title: "Issue Selected",
+                  description: `Viewing details for: ${issue.title}`,
+                  duration: 3000,
+                });
+              }}
+              height="h-[600px]"
+            />
           </div>
         </div>
       </section>
